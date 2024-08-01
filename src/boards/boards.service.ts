@@ -1,43 +1,35 @@
-import { v1 as uuid } from 'uuid';
-
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { BoardStatus } from './boards.define';
+import { Board } from './boards.entity';
+import { BoardRepository } from './boards.repository';
 import { CreateBoardDto } from './dto/boards.req.dto';
-import { ResBoard } from './dto/boards.res.dto';
 
 @Injectable()
 export class BoardsService {
-  private boards: ResBoard[] = [];
+  constructor(
+    private readonly boardRepository: BoardRepository
+  ) {}
 
-  getAllBoards(): ResBoard[] {
-    return this.boards;
+  async getAllBoards(): Promise<Board[]> {
+    return await this.boardRepository.findBoard();
   }
 
-  createBoard(createBoardDto: CreateBoardDto) {
-    const { title, description } = createBoardDto;
-    const board: ResBoard = {
-      id: uuid(),
-      title, // title: title 과 같은 의미 (변수명이 같으면 알아서 연결됨)
-      description,
-      status: BoardStatus.PUBLIC,
-    };
-
-    this.boards.push(board);
-    return board;
+  async createBoard(createBoardDto: CreateBoardDto) : Promise<Board> {
+    return await this.boardRepository.createBoard(createBoardDto);
   }
 
-  getBoardById(id: string): ResBoard {
-    return this.boards.find((b) => b.id === id);
+  async getBoardById(id: number): Promise<Board> {
+    return await this.boardRepository.findOneBoard(id);
   }
 
-  deleteBoard(id: string): void {
-    this.boards = this.boards.filter((b) => b.id !== id);
+  async deleteBoard(id: number): Promise<void> {
+    await this.boardRepository.deleteBoard(id);
   }
 
-  updateBoardStatus(id: string, status: BoardStatus): ResBoard {
-    const board = this.getBoardById(id);
-    board.status = status;
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.boardRepository.updateBoardStatus(id, status);
     return board;
   }
 }
