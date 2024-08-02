@@ -6,7 +6,6 @@ import { BoardStatus } from './boards.define';
 import { Board } from './boards.entity';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/boards.req.dto';
-import { ResBoard } from './dto/boards.res.dto';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 
 @Controller('boards')
