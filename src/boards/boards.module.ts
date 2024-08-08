@@ -1,3 +1,4 @@
+import { AuthModule } from 'src/auth/auth.module';
 import { DataSource } from 'typeorm';
 
 import { Module } from '@nestjs/common';
@@ -9,11 +10,10 @@ import { BoardRepository } from './boards.repository';
 import { BoardsService } from './boards.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Board]),
-  ],
+  imports: [TypeOrmModule.forFeature([Board]), AuthModule],
   controllers: [BoardsController],
-  providers: [BoardsService, 
+  providers: [
+    BoardsService,
     {
       provide: BoardRepository,
       useFactory: (dataSource: DataSource) => {
@@ -22,6 +22,6 @@ import { BoardsService } from './boards.service';
       inject: [getDataSourceToken()],
     },
   ],
-  exports: [BoardRepository]
+  exports: [BoardRepository],
 })
 export class BoardsModule {}
